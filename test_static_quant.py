@@ -1,3 +1,4 @@
+from multiprocessing.spawn import prepare
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -25,13 +26,14 @@ model_fp32.eval()
 model_fp32.qconfig = torch.quantization.get_default_qconfig('fbgemm')
 
 #Fuse activations to preceding layers
-model_fp32_fused = torch.quantization.fuse_modules(model_fp32, [['conv1', 'relu1'], ['conv2', 'relu2']])
+#model_fp32_fused = torch.quantization.fuse_modules(model_fp32, [['conv1', 'relu1'], ['conv2', 'relu2']])
+model_fp32_fused = model_fp32
 
 # Prepare the model for static quantization. This inserts observers in
 # the model that will observe activation tensors during calibration.
 model_fp32_prepared = torch.quantization.prepare(model_fp32_fused)
 
-# calibrate the prepared model to determine quantization parameters for activations
+# Calibrate the prepared model to determine quantization parameters for activations
 # in a real world setting, the calibration would be done with a representative dataset
 with torch.no_grad():
     for data in testloader:
@@ -73,3 +75,7 @@ print(f"Test accuracy: {test_acc_curr*100:.2f} %")
 
 #Save quantized model
 #TODO
+print(model_fp32)
+print(f"Float32 model: {model_fp32.conv1.weight[0]}")
+print(f"Int8 model: {model_int8.conv1.weight().dequantize()[0]}")
+#print(f"Int8 model: {model_int8.conv1.weight()}")
