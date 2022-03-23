@@ -3,13 +3,15 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from src.extract_dataset import extract_dataset
 from src.dataset import MNIST_dataset
-from src.model import CNN, CNN_quant
+from src.model import CNN, CNN3
 import matplotlib.pyplot as plt
 plt.style.use('seaborn')
 from tqdm import tqdm
 
 #Extract and load test dataset 
-_, _, test_set = extract_dataset()
+#_, _, test_set = extract_dataset()
+#_, test_set, _ = extract_dataset()
+test_set, _, _ = extract_dataset()
 test_set = MNIST_dataset(test_set)
 
 #Load CUDA 
@@ -21,8 +23,8 @@ print("[INFO] Using device: ", device)
 testloader = DataLoader(test_set, batch_size=1, shuffle=False)
 
 #Load pretrained model
-model_path = "model/CNN_best.pth"
-model = CNN()
+model_path = "model/CNN_best_0.9925.pth"
+model = CNN3()
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.eval()
 model.to(device)

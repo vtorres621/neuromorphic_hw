@@ -4,7 +4,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from src.extract_dataset import extract_dataset
 from src.dataset import MNIST_dataset
-from src.model import CNN
+from src.model import CNN, CNN3
 import matplotlib.pyplot as plt
 plt.style.use('seaborn')
 
@@ -24,18 +24,18 @@ valloader = DataLoader(val_set, batch_size=512, shuffle=False)
 testloader = DataLoader(test_set, batch_size=1, shuffle=False)
 
 #Model
-model = CNN().to(device)
+model = CNN3().to(device)
 
 #Loss and optimizer
 criterion = nn.CrossEntropyLoss().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr = 0.0005)
 
 #Train
 print("[INFO] Training... ")
 train_loss = []
 val_loss = []
 test_accuracy = []
-epochs = 20
+epochs = 100
 best_accuracy = 0
 
 for epoch in range(1, epochs+1):
@@ -102,7 +102,7 @@ for epoch in range(1, epochs+1):
     #If best test results, save model
     if test_acc_curr > best_accuracy:
         best_accuracy = test_acc_curr
-        torch.save(model.state_dict(), f"model/CNN_best.pth")
+        torch.save(model.state_dict(), f"model/CNN_best_{test_acc_curr:.4f}.pth")
 
     #Compute epoch train & validation loss
     train_loss_curr = running_train_loss/len(trainloader)
