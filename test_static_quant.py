@@ -74,7 +74,6 @@ print(f"Test accuracy: {test_acc_curr*100:.2f} %")
 
 
 #Save quantized model
-#TODO
 print(model_fp32)
 print(f"Float32 model: {model_fp32.conv1.weight[0]}")
 print(f"Int8 model: {model_int8.conv1.weight().dequantize()[0]}")
